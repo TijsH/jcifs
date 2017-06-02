@@ -53,7 +53,8 @@ dependencies: Checks that all class dependencies are met.
             target="1.5"
             fork="yes"
             compiler="javac1.5"
-            debug="on">
+            debug="on"
+            includeantruntime="false">
 <!--
             <compilerarg line="-Xlint:deprecation -Xlint:unchecked"/>
 -->
