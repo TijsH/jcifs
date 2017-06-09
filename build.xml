@@ -45,15 +45,13 @@ dependencies: Checks that all class dependencies are met.
         <antcall target="hasServlet"/>
     </target>
 
-    <target name="compile" depends="dependencies">
+    <target name="compile"> <!-- depends="dependencies">-->
         <mkdir dir="build"/>
         <javac srcdir="src"
             destdir="build"
-            source="1.5"
-            target="1.5"
+            classpath=".\..\..\..\tools\java\java_ee_sdk-7u2\glassfish4\glassfish\modules\javax.servlet-api.jar"
             fork="yes"
-            compiler="javac1.5"
-            debug="on"
+            debug="off"
             includeantruntime="false">
 <!--
             <compilerarg line="-Xlint:deprecation -Xlint:unchecked"/>
