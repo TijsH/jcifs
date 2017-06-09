@@ -40,6 +40,29 @@ public class SmbTransport extends Transport implements SmbConstants {
     static synchronized SmbTransport getSmbTransport( UniAddress address, int port ) {
         return getSmbTransport( address, port, LADDR, LPORT, null );
     }
+
+    /**
+     * Added by TijsH as a workaround for the stuck at port 139 issue
+     * It removes all entries for this server from the static SmbTransport list to
+     * force re-negotiating the SMB port.
+     */
+    static synchronized void removeSmbTransport(UniAddress address) {
+        synchronized (CONNECTIONS) {
+            ListIterator iter = CONNECTIONS.listIterator();
+            while (iter.hasNext()) {
+                SmbTransport conn = (SmbTransport) iter.next();
+                if (conn.matches(address, 0, LADDR, LPORT, null)) {
+                    iter.remove();
+                    try {
+                        conn.disconnect(false);
+                    } catch (IOException e) {
+                        // Ignore
+                    }
+                }
+            }
+        }
+    }
+
     static synchronized SmbTransport getSmbTransport( UniAddress address, int port,
                                     InetAddress localAddr, int localPort, String hostName ) {
         SmbTransport conn;

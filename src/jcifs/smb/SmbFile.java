@@ -432,7 +432,28 @@ public class SmbFile extends URLConnection implements SmbConstants {
     boolean opened;
     int tree_num;
 
-/** 
+    private boolean forceNewSmbTransport = false;
+
+    /**
+     * Added by TijsH as a workaround for the stuck at port 139 issue
+     * It forces re-negotiating the SMB port one time when this SmbFile connects.
+     */
+    public void forceNewSmbTransport() {
+        this.forceNewSmbTransport = true;
+    }
+
+    /**
+     * Added by TijsH to get the current TCP port.
+     * Note: only valid after an action, e.g. SmbFile.exists()
+     */
+    public int getPortOnlyValidAfterAnAction() {
+        if (this.tree != null && this.tree.session != null && this.tree.session.transport != null) {
+            return this.tree.session.transport.port;
+        }
+        return 0;
+    }
+
+    /**
  * Constructs an SmbFile representing a resource on an SMB network such as
  * a file or directory. See the description and examples of smb URLs above.
  *
@@ -894,6 +915,12 @@ int addressIndex;
         if (tree != null) {
             trans = tree.session.transport;
         } else {
+            // Added by TijsH as a workaround for the stuck at port 139 issue
+            if (this.forceNewSmbTransport) {
+                SmbTransport.removeSmbTransport(addr);
+                this.forceNewSmbTransport = false;
+            }
+            // End of Added by TijsH as a workaround for the stuck at port 139 issue
             trans = SmbTransport.getSmbTransport(addr, url.getPort());
             tree = trans.getSmbSession(auth).getSmbTree(share, null);
         }
