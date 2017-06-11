@@ -10,8 +10,7 @@ import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 
 public class Hammer {
-    //    static final String baseUrl = "smb://Florien:Florien@192.168.1.22:445/share/archive/";
-    private static final String baseUrl = "smb://Florien:Florien@VAIO/share/archive/";
+    private static final String baseUrl = "smb://MBOX:MBOX@VAIO/share/archive/";
 
     public static void main(String argv[]) {
         //       LogStream.setLevel(3);
