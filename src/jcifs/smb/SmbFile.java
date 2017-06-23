@@ -438,8 +438,10 @@ public class SmbFile extends URLConnection implements SmbConstants {
      * Added by TijsH as a workaround for the stuck at port 139 issue
      * It forces re-negotiating the SMB port one time when this SmbFile connects.
      */
-    public void forceNewSmbTransport() {
-        this.forceNewSmbTransport = true;
+    public void forceNewConnectionOnNewSmbTransport() throws IOException {
+        this.forceNewSmbTransport = true; // forces this.doConnect() to re-negotiate
+        this.tree = null; // Should already be null, forces the this.connect() to make new connection.
+        this.connect();
     }
 
     /**

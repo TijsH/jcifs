@@ -8,9 +8,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class Hammer {
-    private static final String baseUrl = "smb://MBOX:MBOX@VAIO/share/archive/";
+    private static final String baseUrl = "smb://MBOX:MBOX@nas.zartras.com/";
+    private static final String folder = "MBOX/";
 
     public static void main(String argv[]) {
         //       LogStream.setLevel(3);
@@ -20,7 +23,7 @@ public class Hammer {
         jcifs.Config.setProperty("jcifs.smb.client.soTimeout", "30000");
         jcifs.Config.setProperty("jcifs.util.loglevel", "3");
 
-        for (int i = 1; i <= 100000; i++) {
+        for (int i = 1; i <= 1; i++) { // 100000
             System.out.println("====== START ======: " + i);
             try {
                 connectAndTest();
@@ -36,7 +39,7 @@ public class Hammer {
 
     private static void connectAndTest() throws IOException {
         SmbFile f = new SmbFile(baseUrl);
-        f.forceNewSmbTransport();
+        f.forceNewConnectionOnNewSmbTransport();
         if (!f.exists()) {
             throw new IOException("Share not found.");
         }
@@ -44,7 +47,7 @@ public class Hammer {
     }
 
     private static void connectAndPut(int i) throws IOException {
-        SmbFile f = new SmbFile(String.format("%s%s%06d%s", baseUrl, "jcifs", i, ".txt"));
+        SmbFile f = new SmbFile(String.format("%s%s%06d%s", baseUrl + folder, "jcifs", i, ".txt"));
         SmbFileOutputStream out = new SmbFileOutputStream(f);
         String content = "Hello World!";
         out.write(content.getBytes());
@@ -55,7 +58,7 @@ public class Hammer {
         if (i <= 10) {
             return;
         }
-        SmbFile f = new SmbFile(String.format("%s%s%06d%s", baseUrl, "jcifs", i - 10, ".txt"));
+        SmbFile f = new SmbFile(String.format("%s%s%06d%s", baseUrl + folder, "jcifs", i - 10, ".txt"));
         f.delete();
     }
 
