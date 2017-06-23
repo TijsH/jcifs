@@ -439,8 +439,10 @@ public class SmbFile extends URLConnection implements SmbConstants {
      * It forces re-negotiating the SMB port one time when this SmbFile connects.
      */
     public void forceNewConnectionOnNewSmbTransport() throws IOException {
+        if (this.tree != null) { // make sure this.connect() creates a new connection.
+            throw new IOException("Can only call forceNewConnectionOnNewSmbTransport once on a new SmbFile object.");
+        }
         this.forceNewSmbTransport = true; // forces this.doConnect() to re-negotiate
-        this.tree = null; // Should already be null, forces the this.connect() to make new connection.
         this.connect();
     }
 
